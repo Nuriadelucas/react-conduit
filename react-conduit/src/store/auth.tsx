@@ -37,15 +37,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAuthState('unauthenticated');
       return;
     }
-    api.get<{ user: User }>('/user')
-      .then(({ data }) => setAuth(data.user))
-      .catch((err: { status?: number }) => {
-        if (err.status && err.status >= 400 && err.status < 500) {
-          purgeAuth();
-        } else {
-          setAuthState('unavailable');
-        }
-      });
+
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    let cancelled = false;
+
+    const fetchUser = (retryDelay: number) => {
+      api.get<{ user: User }>('/user')
+        .then(({ data }) => {
+          if (!cancelled) setAuth(data.user);
+        })
+        .catch((err: { status?: number }) => {
+          if (cancelled) return;
+          if (err.status && err.status >= 400 && err.status < 500) {
+            purgeAuth();
+          } else {
+            setAuthState('unavailable');
+            const nextDelay = Math.min(retryDelay * 2, 30_000);
+            timeoutId = setTimeout(() => {
+              if (!cancelled) fetchUser(nextDelay);
+            }, retryDelay);
+          }
+        });
+    };
+
+    fetchUser(5_000);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
   }, [setAuth, purgeAuth]);
 
   return (
