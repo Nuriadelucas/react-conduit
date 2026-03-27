@@ -68,15 +68,15 @@ describe('ArticleComment — comment author', () => {
     });
   });
 
-  it('shows the delete icon for the comment author', () => {
+  it('shows the delete button for the comment author', () => {
     wrap(makeComment('janedoe'));
-    expect(document.querySelector('.ion-trash-a')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /delete comment/i })).toBeInTheDocument();
   });
 
-  it('calls onDelete when the delete icon is clicked', () => {
+  it('calls onDelete when the delete button is clicked', () => {
     const onDelete = vi.fn();
     wrap(makeComment('janedoe'), onDelete);
-    fireEvent.click(document.querySelector('.ion-trash-a')!);
+    fireEvent.click(screen.getByRole('button', { name: /delete comment/i }));
     expect(onDelete).toHaveBeenCalledOnce();
   });
 });

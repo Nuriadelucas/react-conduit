@@ -38,7 +38,11 @@ export function ArticleComment({ comment, onDelete }: Props) {
         <span className="date-posted">{date}</span>
         {canModify && (
           <span className="mod-options">
-            <i className="ion-trash-a" onClick={onDelete} />
+            <button
+              className="ion-trash-a"
+              onClick={onDelete}
+              aria-label="Delete comment"
+            />
           </span>
         )}
       </div>
