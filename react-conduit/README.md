@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# React Conduit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> ### React + Vite + TypeScript codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.show) spec and API.
 
-Currently, two official plugins are available:
+A complete migration of the [Angular Conduit](../angular-conduit/) app to React 18, built with Vite and TypeScript.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Getting started
 
-## React Compiler
+Requires [Node.js](https://nodejs.org/) 18+.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/Nuriadelucas/react-conduit.git
+cd react-conduit
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app will be available at `http://localhost:5173` (or the next available port).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Building for production
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build      # Type-check + bundle to dist/
+npm run preview    # Serve the production build locally
 ```
+
+## Functionality overview
+
+Conduit is a social blogging platform (Medium clone). It uses the shared [RealWorld API](https://api.realworld.show/api) for all requests including authentication.
+
+**Features:**
+
+- Authenticate users via JWT (login/signup pages + logout in settings)
+- Create, read, update, delete articles (with Markdown body)
+- Comment on articles
+- Favorite articles and follow other users
+- Paginated article feeds — global, personal (following), and tag-filtered
+- Public user profiles with posts and favorited articles tabs
+
+**Pages:**
+
+| URL | Page |
+|---|---|
+| `/` | Home feed (global articles + tag sidebar) |
+| `/?feed=following` | Personal feed (requires login) |
+| `/tag/:tag` | Home feed filtered by tag |
+| `/login` | Sign in |
+| `/register` | Sign up |
+| `/settings` | Account settings (requires login) |
+| `/editor` | Create new article (requires login) |
+| `/editor/:slug` | Edit existing article (requires login) |
+| `/article/:slug` | Full article view with comments |
+| `/profile/:username` | User profile — their posts |
+| `/profile/:username/favorites` | User profile — their favorited articles |
+
+## Tech stack
+
+| Tool | Purpose |
+|---|---|
+| [React 18](https://react.dev) | UI library |
+| [Vite](https://vite.dev) | Build tool and dev server |
+| [TypeScript](https://www.typescriptlang.org) | Type safety (`strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly`) |
+| [React Router v6](https://reactrouter.com) | Client-side routing |
+| [Axios](https://axios-http.com) | HTTP client |
+| [marked](https://marked.js.org) + [DOMPurify](https://github.com/cure53/DOMPurify) | Markdown rendering with XSS sanitization |
+
+## Project documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) — Project structure, routing, auth state, data flow
+- [COMPONENTS.md](COMPONENTS.md) — Component reference (inputs, outputs, dependencies)
+- [SERVICES.md](SERVICES.md) — Service and API layer reference
+
+## License
+
+MIT
